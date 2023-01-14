@@ -1,0 +1,32 @@
+sources:
+  source_vector_logs:
+    type: internal_logs
+    host_key: agent.name
+    pid_key: ""
+
+transforms:
+  transform_vector_logs:
+    inputs: ["source_vector_logs"]
+    type: remap
+    source: .tags = ["vector"]
+
+sinks:
+  sink_vector_logs:
+    inputs: ["transform_vector_logs"]
+    type: elasticsearch
+    endpoints: ["https://osc:9200"]
+    auth:
+      strategy: basic
+      user:     admin
+      password: a12345678
+    mode: data_stream
+    suppress_type_name: true
+    data_stream:
+      type:      logs
+      dataset:   vector
+      namespace: default
+      sync_fields: true
+    tls:
+      ca_file:  /etc/vector/ssl/crt/server.crt
+      verify_certificate: true
+      verify_hostname:    false

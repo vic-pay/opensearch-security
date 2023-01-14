@@ -31,3 +31,23 @@ This repository contains docker-compose sample for Opensearch cluster with SSL
         # type new password
     
 3) Change hashes in configs/internal_users.yml
+
+## Troubleshooting 
+
+Checl indexes and documents:
+
+1) Check indexes in **Index Management -> Indices**
+1) Create index patterns in **Stack management -> Index Patterns**
+2) Check documents in **Discover**
+
+Check clients:
+
+        docker exec -it auditbeat auditbeat --strict.perms=false test output
+        docker exec -it auditbeat auditbeat --strict.perms=false setup
+
+        docker exec -it filebeat filebeat --strict.perms=false test output
+        docker exec -it filebeat filebeat --strict.perms=false setup
+
+Read logs:
+
+        docker-compose logs -f

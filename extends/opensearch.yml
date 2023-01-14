@@ -23,6 +23,8 @@ services:
       plugins.security.ssl.transport.pemcert_filepath:       certificates/crt/server.crt
       plugins.security.ssl.transport.pemtrustedcas_filepath: certificates/crt/server.crt
       plugins.security.ssl.transport.enforce_hostname_verification: 'false'
+
+      compatibility.override_main_response_version: 'true'
       
       DISABLE_INSTALL_DEMO_CONFIG: 'true'
       JAVA_HOME: /usr/share/opensearch/jdk
@@ -36,7 +38,7 @@ services:
         read_only: true
 
       - type: bind
-        source: ../configs/internal_users.yml
+        source: ../configs/opensearch/internal_users.yml
         target:   /usr/share/opensearch/config/opensearch-security/internal_users.yml
         read_only: true
     ulimits: 
