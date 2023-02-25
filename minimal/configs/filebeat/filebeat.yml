@@ -1,0 +1,39 @@
+filebeat.modules:
+- module: system
+  syslog:
+    enabled: true
+    var.paths: ["/mnt/var/log/syslog"]
+  auth:
+    enabled: true
+    var.paths: ["/mnt/var/log/auth.log"]
+
+
+max_procs: 2
+
+setup.kibana:
+  enable: false
+
+output.elasticsearch:
+  enabled: true
+  hosts: ["https://opensearch-min:9200"]
+  username: admin
+  password: admin
+  ssl.verification_mode: none
+
+output.logstash:
+  enabled: false
+
+output.console:
+  enabled: false
+  pretty:  true
+
+processors:
+  - add_host_metadata: ~
+
+monitoring.enabled: false
+
+logging:
+  level: info
+  to_stderr: true
+  json: false
+  metrics.enabled: false
