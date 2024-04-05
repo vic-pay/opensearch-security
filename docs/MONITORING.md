@@ -1,3 +1,30 @@
+# Opensearch monitoring
+
+This repository contains Opensearch monitoring instruction via Telegraf with Prometheus exporter
+
+## Usage
+
+Add Telegraf in `docker-compose.yml`. Example:
+
+```
+telegraf:
+  image: telegraf:1.23.4-alpine
+  container_name: telegraf
+  hostname:       telegraf
+  volumes:
+    - type: bind
+      source: ./configs/telegraf/telegraf.conf
+      target:  /etc/telegraf/telegraf.conf
+      read_only: true
+  depends_on: ['opensearch-min']
+  networks:   ['opensearch-min']
+  ports:      ['9273:9273']
+  restart: always
+```
+
+Add Telegraf `./configs/telegraf/telegraf.conf` config. Example:
+
+```
 [global_tags]
 
 [agent]
@@ -29,3 +56,18 @@
 # https://github.com/influxdata/telegraf/blob/release-1.25/plugins/outputs/prometheus_client/README.md
 [[outputs.prometheus_client]]
   listen = ":9273"
+```
+
+Deploy containers:
+
+```
+docker-compose up -d
+```
+
+## Verification
+
+Check metrics with `curl`:
+
+```
+curl -v http://localhost:9273/metrics
+```

@@ -1,12 +1,24 @@
-# Opensearch docker-compose
+# Opensearch security
 
-This repository contains docker-compose sample for learning Opensearch:
-
-* [Opensearch minimal deployment](minimal/README.md)
-* [Opensearch cluster with SSL](cluster/README.md)
-* [Opensearch monitoring](monitoring/README.md)
+This repository contains docker-compose sample for learning Opensearch security
 
 ## Usage
 
-1. Change directory to necessary folder
-2. Read `README.md` for next steps
+Generate SSL certificates with ansible playbook:
+
+    ansible-playbook playbook_gen_crt.yml
+
+Deploy containers with `docker-compose`:
+
+    docker-compose up -d
+
+Log in to OpenSearch Dashboars https://localhost:5601 with **admin/a12345678** credentials
+
+## Security topics
+
+* [SIGMA rules](docs/SIGMA.md)
+
+## Customize deployment
+
+* [Opensearch cluster](docs/CLUSTERING.md)
+* [Opensearch monitoring](docs/MONITORING.md)
