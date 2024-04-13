@@ -1,0 +1,112 @@
+---
+_meta:
+  type: "config"
+  config_version: 2
+
+config:
+  dynamic:
+    # Set filtered_alias_mode to 'disallow' to forbid more than 2 filtered aliases per index
+    # Set filtered_alias_mode to 'warn' to allow more than 2 filtered aliases per index but warns about it (default)
+    # Set filtered_alias_mode to 'nowarn' to allow more than 2 filtered aliases per index silently
+    #filtered_alias_mode: warn
+    #do_not_fail_on_forbidden: false
+    #kibana:
+    # Kibana multitenancy
+    #multitenancy_enabled: true
+    #private_tenant_enabled: true
+    #default_tenant: ""
+    #server_username: kibanaserver
+    #index: '.kibana'
+    http:
+      anonymous_auth_enabled: false
+      xff:
+        enabled: false
+        internalProxies: '192\.168\.0\.10|192\.168\.0\.11' # regex pattern
+        #internalProxies: '.*' # trust all internal proxies, regex pattern
+        #remoteIpHeader:  'x-forwarded-for'
+        ###### see https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html for regex help
+        ###### more information about XFF https://en.wikipedia.org/wiki/X-Forwarded-For
+        ###### and here https://tools.ietf.org/html/rfc7239
+        ###### and https://tomcat.apache.org/tomcat-8.0-doc/config/valve.html#Remote_IP_Valve
+    authc:
+      basic_internal_auth_domain:
+        description: "Authenticate via HTTP Basic against internal users database"
+        http_enabled: true
+        transport_enabled: true
+        order: 1
+        http_authenticator:
+          type: basic
+          challenge: true
+        authentication_backend:
+          type: intern
+
+      ldap:
+        description: "Authenticate via LDAP or Active Directory"
+        http_enabled: true
+        transport_enabled: false
+        order: 2
+        http_authenticator:
+          type: basic
+          challenge: false
+        authentication_backend:
+          type: ldap
+          config:
+            enable_ssl: true
+            enable_start_tls: false
+            enable_ssl_client_auth: false
+            verify_hostnames: false
+            hosts:
+            - ${env.LDAP_HOST}
+            bind_dn:  ${env.LDAP_USER}
+            password: ${env.LDAP_PASS}
+            userbase: ${env.LDAP_USER_BASE}
+            usersearch: '(sAMAccountName={0})'
+            username_attribute: sAMAccountName
+            pemtrustedcas_filepath: certificates/crt/ca_ldap.crt
+              
+
+    authz:
+      roles_from_myldap:
+        description: "Authorize via LDAP or Active Directory"
+        http_enabled: true
+        transport_enabled: true
+        authorization_backend:
+          type: ldap
+          config:
+            enable_ssl: true
+            enable_start_tls: false
+            enable_ssl_client_auth: false
+            verify_hostnames: false
+            hosts:
+            - ${env.LDAP_HOST}
+            bind_dn:  ${env.LDAP_USER}
+            password: ${env.LDAP_PASS}
+            rolebase: ${env.LDAP_ROLE_BASE}
+            rolesearch: '(member={0})'
+            userroleattribute: member
+            userrolename: memberOf
+            rolename: cn
+            resolve_nested_roles: true
+            userbase: ${env.LDAP_USER_BASE}
+            usersearch: "(sAMAccountName={0})"
+            skip_users:
+            - "kibanaserver"
+            - "admin"
+            pemtrustedcas_filepath: certificates/crt/ca_ldap.crt
+  
+  #    auth_failure_listeners:
+  #      ip_rate_limiting:
+  #        type: ip
+  #        allowed_tries: 10
+  #        time_window_seconds: 3600
+  #        block_expiry_seconds: 600
+  #        max_blocked_clients: 100000
+  #        max_tracked_clients: 100000
+  #      internal_authentication_backend_limiting:
+  #        type: username
+  #        authentication_backend: intern
+  #        allowed_tries: 10
+  #        time_window_seconds: 3600
+  #        block_expiry_seconds: 600
+  #        max_blocked_clients: 100000
+  #        max_tracked_clients: 100000

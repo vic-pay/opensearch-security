@@ -31,6 +31,13 @@ services:
       
       DISABLE_INSTALL_DEMO_CONFIG: 'true'
       COMPATIBILITY_OVERRIDE_MAIN_RESPONSE_VERSION: 'true'
+      logger.level: INFO
+
+      LDAP_HOST: $LDAP_HOST
+      LDAP_USER: $LDAP_USER
+      LDAP_PASS: $LDAP_PASS
+      LDAP_USER_BASE: $LDAP_USER_BASE
+      LDAP_ROLE_BASE: $LDAP_ROLE_BASE
 
     ulimits:
       memlock:
@@ -49,9 +56,19 @@ services:
         source: ./configs/opensearch/internal_users.yml
         target:  /usr/share/opensearch/config/opensearch-security/internal_users.yml
         read_only: true
+      
+      - type: bind
+        source: ./configs/opensearch/config.yml
+        target:  /usr/share/opensearch/config/opensearch-security/config.yml
+        read_only: true
+
+      - type: bind
+        source: ./configs/opensearch/roles_mapping.yml
+        target:  /usr/share/opensearch/config/opensearch-security/roles_mapping.yml
+        read_only: true
 
       - type: volume 
-        source: opensearch-min
+        source: opensearch-server
         target: /usr/share/opensearch/data
         read_only: false
     ports:    ['9200:9200', '9600:9600']
@@ -59,7 +76,7 @@ services:
     restart: unless-stopped
 
   # DASHBOARDS
-  opensearch-dashboards-min:
+  opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:$OS_VERSION
     container_name: opensearch-dashboards
     hostname:       opensearch-dashboards
@@ -93,8 +110,8 @@ services:
 
 
 volumes:
-  opensearch-min:
-    name: opensearch-min
+  opensearch-server:
+    name: opensearch-server
 
 networks:
   opensearch-net:
