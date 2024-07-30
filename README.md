@@ -18,6 +18,7 @@ Log in to OpenSearch Dashboars https://localhost:5601 with **admin/a12345678** c
 
 * [SIGMA rules](docs/SIGMA.md)
 * [LDAP authentication](docs/LDAP.md)
+* [Audit settings](docs/AUDIT.md)
 
 ## Customize deployment
 

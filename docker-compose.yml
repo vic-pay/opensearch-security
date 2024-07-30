@@ -39,6 +39,9 @@ services:
       LDAP_USER_BASE: $LDAP_USER_BASE
       LDAP_ROLE_BASE: $LDAP_ROLE_BASE
 
+      plugins.security.audit.type: internal_opensearch
+      path.repo: /mnt
+
     ulimits:
       memlock:
         soft: -1 
